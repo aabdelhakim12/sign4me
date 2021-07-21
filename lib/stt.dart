@@ -15,6 +15,8 @@ class SpeechToText extends StatefulWidget {
 const languages = const [
   const Language('Arabic', 'ar_EG'),
   const Language('English', 'en_US'),
+  const Language('Francais', 'fr_FR'),
+  const Language('Español', 'es_ES'),
 ];
 
 class Language {
