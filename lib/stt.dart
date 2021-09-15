@@ -33,8 +33,6 @@ class _SpeechToTextState extends State<SpeechToText> {
   bool _speechRecognitionAvailable = false;
   bool _isListening = false;
 
-  bool sent = false;
-
   String transcription = '';
   String asset = 'assets/videos/null.mp4';
 
@@ -47,7 +45,7 @@ class _SpeechToTextState extends State<SpeechToText> {
 
     activateSpeechRecognizer();
     _controller = VideoPlayerController.asset(asset)
-      ..setLooping(true)
+      ..setLooping(false)
       ..initialize().then((_) {
         _controller.play();
         setState(() {});
@@ -56,13 +54,14 @@ class _SpeechToTextState extends State<SpeechToText> {
 
   void clear() {
     setState(() {
-      print(transcription);
       transcription = '';
     });
   }
 
   void choose() {
-    transcription == 'السلام عليكم'
+    transcription == 'السلام عليكم' ||
+            transcription == 'مرحبا' ||
+            transcription == 'سلام عليكم'
         ? asset = 'assets/videos/1.mp4'
         : transcription == 'انا اسمي عبد الرحمن' ||
                 transcription == 'اسمي عبد الرحمن'
@@ -72,7 +71,7 @@ class _SpeechToTextState extends State<SpeechToText> {
                 : transcription == 'انا اسمي محمد' ||
                         transcription == 'اسمي محمد'
                     ? asset = 'assets/videos/3.mp4'
-                    : transcription == 'وداعا'
+                    : transcription == 'وداعا' || transcription == 'مع السلامه'
                         ? asset = 'assets/videos/5.mp4'
                         : transcription == 'ماذا تفعل' ||
                                 transcription == 'بتعمل ايه'
@@ -101,7 +100,7 @@ class _SpeechToTextState extends State<SpeechToText> {
     choose();
 
     _controller = VideoPlayerController.asset(asset)
-      ..setLooping(true)
+      ..setLooping(false)
       ..initialize().then((_) {
         _controller.play();
         setState(() {});
@@ -125,7 +124,34 @@ class _SpeechToTextState extends State<SpeechToText> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        backgroundColor: Color(0xff2B2929),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: AvatarGlow(
+          animate: _isListening,
+          glowColor: Theme.of(context).primaryColor,
+          endRadius: 75.0,
+          duration: const Duration(milliseconds: 2000),
+          repeatPauseDuration: const Duration(milliseconds: 100),
+          repeat: _isListening,
+          child: FloatingActionButton(
+            backgroundColor: Color(0xffFF4500),
+            onPressed: _speechRecognitionAvailable && !_isListening
+                ? () {
+                    setState(() {
+                      start();
+                    });
+                  }
+                : () {
+                    cancel();
+                    vidodetect();
+                  },
+            child: Icon(
+              _isListening ? Icons.pause : Icons.mic_none,
+            ),
+          ),
+        ),
         appBar: AppBar(
+          backgroundColor: Color(0xff2B2929),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -170,14 +196,17 @@ class _SpeechToTextState extends State<SpeechToText> {
                 Text(
                   _isListening ? 'Listening ...' : 'Listen ',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 20, color: Colors.grey[300]),
                 ),
                 Container(
                   color: Colors.black12,
                   child: Text(
                     transcription,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[300]),
                     softWrap: true,
                   ),
                 ),
@@ -186,80 +215,33 @@ class _SpeechToTextState extends State<SpeechToText> {
                   height: size.height * 0.4,
                   child: video(),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    AvatarGlow(
-                      animate: _isListening,
-                      glowColor: Theme.of(context).primaryColor,
-                      endRadius: 75.0,
-                      duration: const Duration(milliseconds: 2000),
-                      repeatPauseDuration: const Duration(milliseconds: 100),
-                      repeat: _isListening,
-                      child: FloatingActionButton(
-                        onPressed: _speechRecognitionAvailable && !_isListening
-                            ? () {
-                                sent = false;
-                                start();
-                              }
-                            : null,
-                        child: Icon(
-                          _isListening ? Icons.mic : Icons.mic_none,
-                        ),
+                GestureDetector(
+                  onLongPressUp: _speechRecognitionAvailable && !_isListening
+                      ? () {
+                          setState(() {
+                            start();
+                          });
+                        }
+                      : null,
+                  child: Center(
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Color(0xffFF4500),
+                      ),
+                      child: Icon(
+                        _isListening ? Icons.stop : Icons.mic_none,
                       ),
                     ),
-                    AvatarGlow(
-                        animate: false,
-                        glowColor: Theme.of(context).primaryColor,
-                        endRadius: 75.0,
-                        child: FloatingActionButton(
-                          backgroundColor: sent ? Colors.green : null,
-                          onPressed: () {
-                            sent = true;
-                            vidodetect();
-                          },
-                          child: Icon(
-                            !sent ? Icons.send : Icons.done,
-                          ),
-                        )),
-                  ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    FloatingActionButton(
-                        elevation: 0,
-                        backgroundColor: Color.fromRGBO(0, 0, 0, 0.1),
-                        onPressed: _isListening ? () => cancel() : null,
-                        child: Icon(
-                          Icons.cancel,
-                          size: 40,
-                          color: Colors.red,
-                        )),
-                    FloatingActionButton(
-                        elevation: 0,
-                        backgroundColor: Color.fromRGBO(0, 0, 0, 0.1),
-                        onPressed: _isListening
-                            ? () {
-                                stop();
-                                vidodetect();
-                              }
-                            : null,
-                        child: Icon(
-                          Icons.stop,
-                          size: 40,
-                          color: Colors.black,
-                        )),
-                    FloatingActionButton(
-                        elevation: 0,
-                        backgroundColor: Color.fromRGBO(0, 0, 0, 0.1),
-                        onPressed: () {
-                          clear();
-                          sent = false;
-                        },
-                        child: Icon(Icons.delete, size: 40, color: Colors.red)),
-                  ],
-                ),
+                FloatingActionButton(
+                    elevation: 0,
+                    backgroundColor: Color(0xffFF4500),
+                    onPressed: _isListening ? () => cancel() : null,
+                    child: Icon(Icons.cancel_outlined, size: 40)),
               ],
             ),
           ),
@@ -287,10 +269,6 @@ class _SpeechToTextState extends State<SpeechToText> {
 
   void cancel() =>
       _speech.cancel().then((_) => setState(() => _isListening = false));
-
-  void stop() => _speech.stop().then((_) => setState(() {
-        _isListening = false;
-      }));
 
   void onSpeechAvailability(bool result) =>
       setState(() => _speechRecognitionAvailable = result);
