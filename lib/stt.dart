@@ -5,7 +5,6 @@ import 'package:flutter_speech/flutter_speech.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:triall/refersh.dart';
-// import 'package:video_player/video_player.dart';
 
 class SpeechToText extends StatefulWidget {
   static const routeName = '/drw';
@@ -31,7 +30,6 @@ class Language {
 
 class _SpeechToTextState extends State<SpeechToText> {
   late SpeechRecognition _speech;
-  // late VideoPlayerController _controller;
 
   bool _speechRecognitionAvailable = false;
   bool _isListening = false;
