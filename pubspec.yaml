@@ -27,6 +27,11 @@ dependencies:
   avatar_glow: ^2.0.1
   video_player: ^2.1.10
   loading_indicator: ^3.0.1
+  audio_wave: ^0.1.2
+  awesome_dialog: ^2.1.1
+  google_fonts: ^2.1.0
+ 
+
    
 
 
@@ -51,17 +56,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/videos/1.mp4
-    - assets/videos/2.mp4
-    - assets/videos/3.mp4
-    - assets/videos/4.mp4
-    - assets/videos/5.mp4
-    - assets/videos/6.mp4
-    - assets/videos/7.mp4
-    - assets/videos/8.mp4
-    - assets/videos/9.mp4
-    - assets/videos/10.mp4
-    - assets/videos/null.mp4
+    - assets/gifs/
+    - assets/images/
+    
+
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

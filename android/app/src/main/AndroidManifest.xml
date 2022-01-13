@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.triall">
    <application
-        android:label="Deafs"
+        android:label="Sign4me"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
